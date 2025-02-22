@@ -6,7 +6,7 @@ export class UbicacionController   {
   constructor(@Inject('NATS_SERVICE') private natsClient: ClientProxy) {}
 
   @Post()
-  createPayment(@Body() ubicacionMock: { latitud: number, longitud: number }) {
-    this.natsClient.send('ubicacionMock', ubicacionMock);
+  getUbicacion(@Body() ubicacionMock: { latitud: number, longitud: number }) {
+    return this.natsClient.send('ubicacionMock', ubicacionMock);
   }
 }
