@@ -1,1 +1,3 @@
 /api_gateway/.venv
+./microservices/.venv
+minikube-darwin-arm64

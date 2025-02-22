@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: broker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: broker
+  template:
+    metadata:
+      labels:
+        app: broker
+    spec:
+      containers:
+      - name: broker
+        image: broker:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 4222
+        - containerPort: 8222
+        livenessProbe:
+          httpGet:
+            path: /varz          # NATS monitoring endpoint
+            port: 8222
+          initialDelaySeconds: 10
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /varz
+            port: 8222
+          initialDelaySeconds: 5
+          periodSeconds: 15

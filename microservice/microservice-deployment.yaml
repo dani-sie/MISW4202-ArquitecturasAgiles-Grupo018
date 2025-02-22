@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: microservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: microservice
+  template:
+    metadata:
+      labels:
+        app: microservice
+    spec:
+      containers:
+      - name: microservice
+        image: microservice:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3000
+        livenessProbe:
+          httpGet:
+            path: /health       # Microservice health endpoint (includes random failures)
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 15

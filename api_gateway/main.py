@@ -1,30 +1,52 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
-import httpx
+import json
+from nats.aio.client import Client as NATS
 
 app = FastAPI()
+nats_client = NATS()
 
-services = {
-    "service1": "https://service.first:8001",
-    "service2": "https://service.second:8002",
-    # Add more services as needed
-}
+# On startup, connect to the NATS broker (using the Docker service name "nats")
+@app.on_event("startup")
+async def startup_event():
+    try:
+        await nats_client.connect(servers=["nats://nats:4222"])
+    except Exception as e:
+        raise RuntimeError(f"Error connecting to NATS broker: {e}")
 
-async def forward_request(service_url: str, method: str, path: str, body=None, headers=None):
-    async with httpx.AsyncClient() as client:
-        url = f"{service_url}{path}"
-        response = await client.request(method, url, json=body, headers=headers)
-        return response
+# Clean up on shutdown
+@app.on_event("shutdown")
+async def shutdown_event():
+    if nats_client.is_connected:
+        await nats_client.close()
 
-@app.api_route("/{service}/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
-async def gateway(service: str, path: str, request: Request):
-    if service not in services:
-        raise HTTPException(status_code=404, detail="Service not found")
+# An endpoint that uses NATS request/reply messaging to communicate with a downstream service.
+# The gateway publishes a JSON payload to the provided subject and waits for a response.
+@app.post("/request/{subject}")
+async def request_subject(subject: str, request: Request):
+    payload = await request.json()
+    try:
+        msg = await nats_client.request(subject, json.dumps(payload).encode(), timeout=2)
+        data = json.loads(msg.data.decode())
+        return JSONResponse(content=data)
+    except Exception as e:
+        raise HTTPException(status_code=503, detail="Service unavailable: " + str(e))
 
-    service_url = services[service]
-    body = await request.json() if request.method in ["POST", "PUT", "PATCH"] else None
-    headers = dict(request.headers)
-
-    response = await forward_request(service_url, request.method, f"/{path}", body, headers)
-
-    return JSONResponse(status_code=response.status_code, content=response.json())
+# A simple publish endpoint if you need fire-and-forget messaging
+@app.post("/publish/{subject}")
+async def publish(subject: str, request: Request):
+    payload = await request.json()
+    await nats_client.publish(subject, json.dumps(payload).encode())
+    return {"status": "published"}
+    
+# Basic self-health endpoint
+@app.get("/health")
+async def health():
+    return {"status": "healthy"}
+# Health-check endpoint for verifying connectivity to the NATS broker.
+@app.get("/health/nats")
+async def health_nats():
+    if nats_client.is_connected:
+        return {"nats": "healthy"}
+    else:
+        raise HTTPException(status_code=503, detail="NATS broker is unreachable")
