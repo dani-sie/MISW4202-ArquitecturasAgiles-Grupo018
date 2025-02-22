@@ -18,3 +18,10 @@ spec:
         imagePullPolicy: Never
         ports:
         - containerPort: 8000
+        resources:
+          requests:
+            cpu: "100m"     # Solicita 0.1 CPU
+            memory: "50Mi"  # Solicita 50 MB de memoria
+          limits:
+            cpu: "200m"     # Máximo 0.2 CPU
+            memory: "100Mi" # Máximo 100 MB de memoria
