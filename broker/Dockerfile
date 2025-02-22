@@ -6,4 +6,6 @@ FROM nats:latest
 EXPOSE 4222 8222
 
 # Start NATS with debug and verbose logging enabled
-CMD ["-DV"]
+ENTRYPOINT ["/nats-server"]
+CMD ["--config" "nats-server.conf"]
+

@@ -17,7 +17,7 @@ COPY . .
 RUN npm run build
 
 # Expose port 3000 for the HTTP server (health check endpoint)
-EXPOSE 8000
+EXPOSE 3000
 
 # Command to run the hybrid application
 CMD ["node", "dist/main.js"]

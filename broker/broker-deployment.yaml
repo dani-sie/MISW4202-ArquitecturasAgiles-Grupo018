@@ -6,28 +6,16 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: broker
+      app: nats
   template:
     metadata:
       labels:
-        app: broker
+        app: nats
     spec:
       containers:
-      - name: broker
-        image: broker:latest
-        imagePullPolicy: IfNotPresent
+      - name: nats
+        image: nats:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 4222
         - containerPort: 8222
-        livenessProbe:
-          httpGet:
-            path: /varz          # NATS monitoring endpoint
-            port: 8222
-          initialDelaySeconds: 10
-          periodSeconds: 30
-        readinessProbe:
-          httpGet:
-            path: /varz
-            port: 8222
-          initialDelaySeconds: 5
-          periodSeconds: 15

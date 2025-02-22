@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api-gateway
+  name: ms
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: api-gateway
+      app: ms
   template:
     metadata:
       labels:
-        app: api-gateway
+        app: ms
     spec:
       containers:
-      - name: api-gateway
-        image: api-gateway:latest
+      - name: ms
+        image: ms:latest
         imagePullPolicy: Never
         ports:
-        - containerPort: 8000
+        - containerPort: 3000
