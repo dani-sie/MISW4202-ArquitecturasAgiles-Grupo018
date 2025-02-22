@@ -13,11 +13,6 @@ Asegúrate de tener Minikube instalado. Para descargar e instalar Minikube para 
 
 [Minikube - Documentación de Inicio](https://minikube.sigs.k8s.io/docs/start/?arch=%2Fmacos%2Farm64%2Fstable%2Fbinary+download)
 
-Luego, inicia Minikube con el siguiente comando:
-
-```bash
-minikube start
-
 ### 2. Construir las Imágenes Docke
 # Asegúrate de estar apuntando al daemon de Docker de Minikube:
 eval $(minikube docker-env)
