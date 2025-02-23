@@ -38,3 +38,7 @@ curl --location 'http://localhost:8000/ubicacion' \
     "latitud": 12,
     "longitud": 10
 }'
+
+#### 7 probar con jmeter o ab
+## ab
+ab -n 9999 -c 100 http://localhost:8000/ubicacion
