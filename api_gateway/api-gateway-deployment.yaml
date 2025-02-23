@@ -25,3 +25,10 @@ spec:
           limits:
             cpu: "200m"     # Máximo 0.2 CPU
             memory: "100Mi" # Máximo 100 MB de memoria
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 15
+        
