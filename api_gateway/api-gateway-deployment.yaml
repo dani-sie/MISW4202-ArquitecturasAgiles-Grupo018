@@ -20,11 +20,11 @@ spec:
         - containerPort: 8000
         resources:
           requests:
-            cpu: "1m"     # Solicita 0.1 CPU
-            memory: "1Mi"  # Solicita 50 MB de memoria
+            cpu: "50m"     # Solicita 0.1 CPU
+            memory: "5Mi"  # Solicita 50 MB de memoria
           limits:
-            cpu: "20m"     # Máximo 0.2 CPU
-            memory: "2Mi" # Máximo 100 MB de memoria
+            cpu: "100m"     # Máximo 0.2 CPU
+            memory: "10Mi" # Máximo 100 MB de memoria
         livenessProbe:
           httpGet:
             path: /health
