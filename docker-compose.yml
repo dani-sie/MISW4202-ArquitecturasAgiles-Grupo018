@@ -1,0 +1,123 @@
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    networks:
+      - kafka_network
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://host.docker.internal:9092
+      KAFKA_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    networks:
+      - kafka_network
+    ports:
+      - "9092:9092"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - kafka_data:/var/lib/kafka/data
+    healthcheck:
+      test: ["CMD", "/bin/sh", "-c", "kafka-topics --bootstrap-server kafka:9092 --list"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    networks:
+      - kafka_network
+    ports:
+      - "6379:6379"
+
+  api_gateway:
+    build: ./api_gateway
+    container_name: api_gateway
+    depends_on:
+      kafka:
+        condition: service_healthy
+    networks:
+      - kafka_network
+    ports:
+      - "5005:5005"
+
+  optimizador1:
+    build: ./optimizadores
+    container_name: optimizador1
+    depends_on:
+      kafka:
+        condition: service_healthy
+    networks:
+      - kafka_network
+
+  optimizador2:
+    build: ./optimizadores
+    container_name: optimizador2
+    depends_on:
+      kafka:
+        condition: service_healthy
+    networks:
+      - kafka_network
+
+  optimizador3:
+    build: ./optimizadores
+    container_name: optimizador3
+    depends_on:
+      kafka:
+        condition: service_healthy
+    networks:
+      - kafka_network
+
+  validador:
+    build: ./validador
+    container_name: validador
+    depends_on:
+      kafka:
+        condition: service_healthy
+    networks:
+      - kafka_network
+
+  compras:
+    build: ./compras
+    container_name: compras
+    depends_on:
+      kafka:
+        condition: service_healthy
+    networks:
+      - kafka_network
+
+  productos:
+    build: ./productos
+    container_name: productos
+    depends_on:
+      kafka:
+        condition: service_healthy
+    networks:
+      - kafka_network
+
+  monitor:
+    build: ./monitor
+    container_name: monitor
+    depends_on:
+      kafka:
+        condition: service_healthy
+    networks:
+      - kafka_network
+
+networks:
+  kafka_network:
+    driver: bridge
+
+volumes:
+  kafka_data:
