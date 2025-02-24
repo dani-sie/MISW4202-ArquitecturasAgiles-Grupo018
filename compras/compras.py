@@ -5,7 +5,7 @@ import threading
 
 app = Flask(__name__)
 
-
+# Inicializamos un productor para enviar la respuesta
 producer = KafkaProducer(
     bootstrap_servers="host.docker.internal:9092",
     value_serializer=lambda v: json.dumps(v).encode('utf-8')
@@ -20,7 +20,7 @@ def kafka_listener():
     for message in consumer:
         data = message.value
         print("Mensaje recibido de Kafka en Compras:", data)
-      
+        # Simulamos el historial de compras basado en la orden recibida
         historial_compras = {
             "id_compra": data.get("id_compra"),
             "historial": [
@@ -28,11 +28,11 @@ def kafka_listener():
                 {"item": "Producto B", "cantidad": 2, "fecha": "2025-01-15"}
             ]
         }
-
+        # Enviamos la respuesta al tópico "respuesta_compras"
         producer.send("respuesta_compras", historial_compras)
         print("Historial de compras enviado:", historial_compras)
 
-
+# Iniciamos el consumidor de Kafka en un hilo separado
 kafka_thread = threading.Thread(target=kafka_listener)
 kafka_thread.daemon = True
 kafka_thread.start()

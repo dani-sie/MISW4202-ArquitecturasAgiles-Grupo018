@@ -20,7 +20,7 @@ def restart_service(service_name):
     Se asume que el nombre del contenedor es el mismo que el nombre del servicio.
     """
     try:
-
+        # Ejecuta el comando 'docker restart <service_name>'
         result = subprocess.run(
             ["docker", "restart", service_name],
             check=True,
@@ -39,9 +39,9 @@ while True:
                 raise Exception("Fallo en el status code")
         except Exception as e:
             print(f"Error en {servicio}: {e}")
-
+            # Notificar el fallo vía Kafka
             producer.send("fallos_servicios", {"servicio": servicio})
- 
+            # Intentar reiniciar el servicio inmediatamente
             restart_service(servicio)
     
     time.sleep(5)

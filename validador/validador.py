@@ -4,8 +4,8 @@ import json
 
 app = Flask(__name__)
 
-consumer = KafkaConsumer("resultados_optimización", bootstrap_servers="host.docker.internal:9092", auto_offset_reset="earliest",
-                         value_deserializer=lambda m: json.loads(m.decode('utf-8')))
+#consumer = KafkaConsumer("resultados_optimizacion", bootstrap_servers="host.docker.internal:9092", auto_offset_reset="earliest",
+#                         value_deserializer=lambda m: json.loads(m.decode('utf-8')))
 producer = KafkaProducer(bootstrap_servers="host.docker.internal:9092", value_serializer=lambda v: json.dumps(v).encode('utf-8'))
 
 @app.route("/validar_resultados", methods=["POST"])
