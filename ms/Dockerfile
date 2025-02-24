@@ -1,23 +1,23 @@
-# Use the official Node.js image (LTS)
-FROM node:16-alpine
+# Usa Node.js 20 (para compatibilidad con api-gateway)
+FROM node:20-alpine
 
-# Set the working directory
+# Establece el directorio de trabajo
 WORKDIR /app
 
-# Copy package.json and package-lock.json (or yarn.lock)
+# Copia los archivos de dependencias primero
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install --only=production
+# Instala solo las dependencias necesarias
+RUN npm ci --no-fund --no-audit
 
-# Copy the rest of the application code
+# Copia el código de la aplicación
 COPY . .
 
-# Build the application (assuming you use TypeScript)
-RUN npm run build
+# Compila el proyecto (NestJS)
+RUN npx nest build && if [ ! -f "dist/main.js" ]; then echo "Error: dist/main.js no encontrado" && exit 1; fi
 
-# Expose port 3000 for the HTTP server (health check endpoint)
+# Expone el puerto 3000 (debe coincidir con el que usa la aplicación)
 EXPOSE 3000
 
-# Command to run the hybrid application
+# Comando de inicio
 CMD ["node", "dist/main.js"]
