@@ -6,10 +6,6 @@ services:
     container_name: api_gateway
     ports:
       - "5002:5002"
-    environment:
-      # Configuramos para que todas las peticiones HTTP/HTTPS salientes se enruten por el proxy
-      HTTP_PROXY: "http://mitmproxy:8080"
-      HTTPS_PROXY: "http://mitmproxy:8080"
 
   auth:
     build: ./auth
@@ -27,22 +23,3 @@ services:
   compras:
     build: ./compras
     container_name: compras
-
-  # Servicio proxy con mitmproxy
-  mitmproxy:
-    image: mitmproxy/mitmproxy:latest
-    container_name: mitmproxy
-    command: >
-      mitmweb
-      --listen-host 0.0.0.0
-      --listen-port 8080
-      --web-host 0.0.0.0
-      --web-port 8081
-      --no-web-open-browser
-      --set web_open_browser=false
-      --set web_user_sessions=false
-      --set web_authenticate=false
-      --set web_password=MiClave123
-    ports:
-      - "8080:8080"
-      - "8081:8081"
