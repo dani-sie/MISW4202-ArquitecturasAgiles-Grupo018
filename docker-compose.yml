@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  api_gateway:
+    build: ./api-gateway
+    container_name: api_gateway
+    ports:
+      - "5002:5002"
+
+  auth:
+    build: ./auth
+    container_name: auth
+    # No exponemos el puerto para acceso externo
+
+  monitor:
+    build: ./monitor
+    container_name: monitor
+
+  cache:
+    build: ./cache-service
+    container_name: cache
+
+  compras:
+    build: ./compras
+    container_name: compras
