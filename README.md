@@ -204,3 +204,12 @@ Simulate tampering with the HMAC signature—either by temporarily modifying the
 
 #### Intrusion Detection Test:
 Send repeated invalid login attempts and verify that the Monitor service logs these events and triggers an alert after reaching the set threshold.
+
+
+
+INSERT INTO USR_EAP_LOGS.TBL_PROPIEDADES (TABLA,CODIGO,VALOR,ESTADO,APLICACION) VALUES ('app.jms.insertqueuetimeout',null,'10000',1,'WSBankPayment');
+INSERT INTO USR_EAP_LOGS.TBL_PROPIEDADES (TABLA,CODIGO,VALOR,ESTADO,APLICACION) VALUES ('jms.factory',null,'jms/AuditEAPFactory',1,'WSBankPayment');
+INSERT INTO USR_EAP_LOGS.TBL_PROPIEDADES (TABLA,CODIGO,VALOR,ESTADO,APLICACION) VALUES ('jms.queue',null,'jms/AuditEAPQueueOne',1,'WSBankPayment');
+INSERT INTO USR_EAP_LOGS.TBL_PROPIEDADES (TABLA,CODIGO,VALOR,ESTADO,APLICACION) VALUES ('jms.ttl',null,'5000',1,'WSBankPayment');
+INSERT INTO USR_EAP_LOGS.TBL_PROPIEDADES (TABLA,CODIGO,VALOR,ESTADO,APLICACION) VALUES ('app.tbl.auditoria',null,'TB_BANKPAYMENT$AUD',1,'WSBankPayment');
+INSERT INTO USR_EAP_LOGS.TBL_PROPIEDADES (TABLA,CODIGO,VALOR,ESTADO,APLICACION) VALUES ('app.jms.responsereadqueuetimeout',null,'2000',1,'WSBankPayment');
